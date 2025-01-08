@@ -41,13 +41,15 @@ export const AuthProvider = ({ children }: Props) => {
     setFormLoading(true);
 
     try {
-      const res = await instance.post(`/auth/register`, values);
+      const { status, data } = await instance.post(`/auth/register`, values);
 
-      if (res.status === 201) {
+      if (status === 201) {
         toast({
           variant: 'default',
-          title: res.data.message,
+          title: data.message,
         });
+
+        Cookies.set('token', data.token);
 
         window.location.href = '/categorys';
 
@@ -87,13 +89,15 @@ export const AuthProvider = ({ children }: Props) => {
     setFormLoading(true);
 
     try {
-      const res = await instance.post(`/auth/login`, values);
+      const { status, data } = await instance.post(`/auth/login`, values);
 
-      if (res.status === 202) {
+      if (status === 202) {
         toast({
           variant: 'default',
-          title: res.data.message,
+          title: data.message,
         });
+
+        Cookies.set('token', data.token);
 
         window.location.href = '/categorys';
 
@@ -136,9 +140,9 @@ export const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const cookies = Cookies.get();
+      const token = Cookies.get('token');
 
-      if (!cookies.token) {
+      if (!token) {
         setIsAuthenticated(false);
         setLoading(false);
         return;
