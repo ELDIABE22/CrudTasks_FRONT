@@ -30,7 +30,7 @@ const CardCategory = ({
   );
 
   const handleCardClick = () => {
-    navigate(`/categorys/${category.name}/${category._id}/tasks`);
+    navigate(`/categories/${category.name}/${category._id}/tasks`);
   };
 
   useEffect(() => {

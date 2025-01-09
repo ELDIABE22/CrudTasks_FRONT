@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: Props) => {
 
         Cookies.set('token', data.token);
 
-        window.location.href = '/categorys';
+        window.location.href = '/categories';
 
         formRegister.reset({
           name: '',
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: Props) => {
 
         Cookies.set('token', data.token);
 
-        window.location.href = '/categorys';
+        window.location.href = '/categories';
 
         formLogin.reset({
           email: '',

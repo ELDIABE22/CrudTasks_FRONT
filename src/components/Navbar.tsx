@@ -11,9 +11,13 @@ const Navbar = () => {
   return (
     <nav className="min-h-20 bg-slate-900 flex flex-col sm:flex-row items-center justify-between py-5 px-5 sm:px-10 rounded-2xl border border-white">
       <div className="flex items-center space-x-2 sm:space-x-5">
-        {pathname.includes('/categorys/') && (
-          <Link to="/categorys">
-            <Button variant="ghost" size="icon" className="text-white h-8 w-8 sm:h-10 sm:w-10">
+        {pathname.includes('/categories/') && (
+          <Link to="/categories">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white h-8 w-8 sm:h-10 sm:w-10"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
           </Link>

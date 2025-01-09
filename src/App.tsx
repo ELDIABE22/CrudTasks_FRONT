@@ -17,7 +17,7 @@ function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route
-          path="/categorys"
+          path="/categories"
           element={
             <LayoutTask>
               <CategoryPage />
@@ -25,7 +25,7 @@ function App() {
           }
         />
         <Route
-          path="/categorys/:categoryName/:categoryId/tasks"
+          path="/categories/:categoryName/:categoryId/tasks"
           element={
             <LayoutTask>
               <TaskPage />
