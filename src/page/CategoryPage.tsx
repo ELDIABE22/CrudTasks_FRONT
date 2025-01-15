@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import CardCategory from '@/components/CardCategory/CardCategory';
 import DialogCategory from '@/components/CardCategory/components/DialogNewCategory/DialogCategory';
+import Loader from '@/components/Loader';
 
 const CategoryPage = () => {
   const [dataFormUpdate, setDataFormUpdate] = useState<ICategoryContext | null>(
@@ -21,6 +22,7 @@ const CategoryPage = () => {
     openAsNew,
     closeDialog,
     openAsUpdate,
+    loadingCategories,
   } = useTask();
   const { user } = useAuth();
 
@@ -33,33 +35,42 @@ const CategoryPage = () => {
 
   return (
     <>
-      <h1 className="text-4xl text-center text-white font-bold mb-10">
-        CATEGORÍAS
-      </h1>
-      <div className="text-center">
-        <DialogCategory
-          dialogState={dialogState}
-          openAsNew={openAsNew}
-          closeDialog={closeDialog}
-          dataFormUpdate={dataFormUpdate}
-        />
-      </div>
-      <div className="flex gap-8 flex-wrap justify-center">
-        {categorys.length > 0 ?
-          categorys.map((cat) => (
-            <CardCategory
-              key={cat._id}
-              category={cat}
-              tasks={tasks}
-              getTasks={getTasks}
-              openAsUpdate={openAsUpdate}
-              setDataFormUpdate={setDataFormUpdate}
-              deleteCategory={deleteCategory}
+      {loadingCategories ? (
+        <Loader />
+      ) : (
+        <>
+          <h1 className="text-4xl text-center text-white font-bold mb-10">
+            CATEGORÍAS
+          </h1>
+          <div className="text-center">
+            <DialogCategory
+              dialogState={dialogState}
+              openAsNew={openAsNew}
+              closeDialog={closeDialog}
+              dataFormUpdate={dataFormUpdate}
             />
-          )) : (
-            <p className='text-white text-2xl font-semibold'>No tienes ninguna categoría.</p>
-          )}
-      </div>
+          </div>
+          <div className="flex gap-8 flex-wrap justify-center">
+            {categorys.length > 0 ? (
+              categorys.map((cat) => (
+                <CardCategory
+                  key={cat._id}
+                  category={cat}
+                  tasks={tasks}
+                  getTasks={getTasks}
+                  openAsUpdate={openAsUpdate}
+                  setDataFormUpdate={setDataFormUpdate}
+                  deleteCategory={deleteCategory}
+                />
+              ))
+            ) : (
+              <p className="text-white text-2xl font-semibold">
+                No tienes ninguna categoría.
+              </p>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -38,6 +38,8 @@ export interface IDialogStateContext {
 export interface ITaskContextValue {
   tasks: ITaskContext[] | [];
   categorys: ICategoryContext[] | [];
+  loadingTasks: boolean;
+  loadingCategories: boolean;
   dialogState: IDialogStateContext;
   setDialogState: React.Dispatch<React.SetStateAction<IDialogStateContext>>;
   formCategory: UseFormReturn<{
@@ -61,8 +63,8 @@ export interface ITaskContextValue {
   openAsNew: () => void;
   openAsUpdate: () => void;
   closeDialog: () => void;
-  getTasks: () => Promise<JSX.Element | undefined>;
-  getIdTask: (idCategory: string) => Promise<JSX.Element | undefined>;
+  getTasks: () => Promise<void>;
+  getIdTask: (idCategory: string) => Promise<void>;
   newTask: (
     values: z.infer<typeof formTaskSchema>
   ) => Promise<JSX.Element | undefined>;
@@ -78,8 +80,8 @@ export interface ITaskContextValue {
     id: string,
     categoryId: string | undefined
   ) => Promise<void | JSX.Element>;
-  getCategory: () => Promise<JSX.Element | undefined>;
-  getIdCategory: (idUser: string) => Promise<JSX.Element | undefined>;
+  getCategory: () => Promise<void>;
+  getIdCategory: (idUser: string) => Promise<void>;
   newCategory: (
     values: z.infer<typeof formCategorySchema>
   ) => Promise<JSX.Element | undefined>;

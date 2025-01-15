@@ -13,15 +13,15 @@ import {
   ITaskContextValue,
   Props,
 } from './taskContext.type';
-
-import axios from 'axios';
-import instance from '@/lib/axios';
+import { handleAxiosError, instance } from '@/lib/axios';
 
 export const TaskContext = createContext<ITaskContextValue | null>(null);
 
 export const TaskProvider = ({ children }: Props) => {
   const [tasks, setTasks] = useState<ITaskContext[] | []>([]);
   const [categorys, setCategorys] = useState<ICategoryContext[] | []>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   // Estado para abrir y cerrar el DialogCategory
   const [dialogState, setDialogState] = useState<IDialogStateContext>({
@@ -58,62 +58,26 @@ export const TaskProvider = ({ children }: Props) => {
   });
 
   const getTasks = async () => {
+    setLoadingTasks(true);
     try {
       const res = await instance.get('/task');
       setTasks(res.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
   const getIdTask = async (idCategory: string) => {
+    setLoadingTasks(true);
     try {
       const res = await instance.get(`/task/${idCategory}`);
       setTasks(res.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
@@ -130,6 +94,8 @@ export const TaskProvider = ({ children }: Props) => {
       category,
       user: user?.id,
     };
+
+    setLoadingTasks(true);
     try {
       const res = await instance.post('/task/new', dataTask);
 
@@ -153,28 +119,9 @@ export const TaskProvider = ({ children }: Props) => {
         closeDialog();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
@@ -192,6 +139,7 @@ export const TaskProvider = ({ children }: Props) => {
       user: user?.id,
     };
 
+    setLoadingTasks(true);
     try {
       const res = await instance.put(`/task/update/${id}`, dataTask);
 
@@ -216,28 +164,9 @@ export const TaskProvider = ({ children }: Props) => {
         closeDialog();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
@@ -246,6 +175,7 @@ export const TaskProvider = ({ children }: Props) => {
     categoryId: string | undefined,
     state: string
   ) => {
+    setLoadingTasks(true);
     try {
       const res = await instance.put(`/task/update/${id}`, {
         category: categoryId,
@@ -265,34 +195,16 @@ export const TaskProvider = ({ children }: Props) => {
         if (categoryId) getIdTask(categoryId);
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
   const deleteTask = async (id: string, categoryId: string | undefined) => {
     if (!categoryId) return console.log('Falta el id de la categoría');
 
+    setLoadingTasks(true);
     try {
       const res = await instance.delete(`/task/delete/${id}`);
 
@@ -308,88 +220,33 @@ export const TaskProvider = ({ children }: Props) => {
         getIdTask(categoryId);
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingTasks(false);
     }
   };
 
   const getCategory = async () => {
+    setLoadingCategories(true);
     try {
       const res = await instance.get('/category');
       setCategorys(res.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
   const getIdCategory = async (idUser: string) => {
+    setLoadingCategories(true);
     try {
       const res = await instance.get(`/category/${idUser}`);
       setCategorys(res.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -406,6 +263,7 @@ export const TaskProvider = ({ children }: Props) => {
       description,
     };
 
+    setLoadingCategories(true);
     try {
       const res = await instance.post('/category/new', dataCategory);
 
@@ -428,28 +286,9 @@ export const TaskProvider = ({ children }: Props) => {
         closeDialog();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -466,6 +305,7 @@ export const TaskProvider = ({ children }: Props) => {
       description,
     };
 
+    setLoadingCategories(true);
     try {
       const res = await instance.put(`/category/update/${id}`, dataCategory);
 
@@ -489,28 +329,9 @@ export const TaskProvider = ({ children }: Props) => {
         closeDialog();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -519,6 +340,7 @@ export const TaskProvider = ({ children }: Props) => {
       return <Navigate to="/auth/login" />;
     }
 
+    setLoadingCategories(true);
     try {
       const res = await instance.delete(`/category/delete/${id}`);
 
@@ -536,28 +358,9 @@ export const TaskProvider = ({ children }: Props) => {
         getTasks();
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (
-          error.response?.status !== undefined &&
-          error.response?.status >= 400 &&
-          error.response?.status <= 499
-        ) {
-          if (error.response?.status === 403)
-            return <Navigate to="/auth/login" />;
-          
-          toast({
-            variant: 'destructive',
-            title: error.response?.data.message,
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error interno!',
-            description:
-              'Lo sentimos, estamos experimentando problemas técnicos. Por favor, inténtalo de nuevo más tarde.',
-          });
-        }
-      }
+      handleAxiosError(error);
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -566,6 +369,8 @@ export const TaskProvider = ({ children }: Props) => {
       value={{
         tasks,
         categorys,
+        loadingTasks,
+        loadingCategories,
         dialogState,
         setDialogState,
         formCategory,

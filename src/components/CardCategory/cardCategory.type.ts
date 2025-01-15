@@ -6,7 +6,7 @@ import {
 export type Props = {
   category: ICategoryContext;
   tasks: ITaskContext[] | [];
-  getTasks: () => Promise<JSX.Element | undefined>;
+  getTasks: () => Promise<void>;
   openAsUpdate: () => void;
   setDataFormUpdate: React.Dispatch<
     React.SetStateAction<ICategoryContext | null>

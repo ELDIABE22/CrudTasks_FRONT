@@ -7,9 +7,9 @@ import { createContext, useEffect, useState } from 'react';
 import { formLoginSchema, formRegisterSchema } from '@/lib/zod';
 
 import axios from 'axios';
-import instance from '@/lib/axios';
 import Cookies from 'js-cookie';
 import { Navigate } from 'react-router-dom';
+import { instance } from '@/lib/axios';
 
 export const AuthContext = createContext<IAuthContextValue | null>(null);
 

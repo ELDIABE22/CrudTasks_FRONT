@@ -49,8 +49,14 @@ const TaskPage = () => {
     null
   );
   const { user } = useAuth();
-  const { getIdTask, tasks, deleteTask, openAsUpdate, updateStateTask } =
-    useTask();
+  const {
+    getIdTask,
+    tasks,
+    deleteTask,
+    openAsUpdate,
+    updateStateTask,
+    loadingTasks,
+  } = useTask();
 
   const { categoryId } = useParams<IParams>();
 
@@ -206,16 +212,22 @@ const TaskPage = () => {
 
   return (
     <>
-      <h1 className="text-4xl text-center text-white font-bold">TAREAS</h1>
+      {loadingTasks ? (
+        <Loader />
+      ) : (
+        <>
+          <h1 className="text-4xl text-center text-white font-bold">TAREAS</h1>
 
-      <div className="container mx-auto px-0 pt-10 md:py-10">
-        <TableTask
-          columns={columns}
-          data={tasks}
-          categoryId={categoryId}
-          dataFormUpdate={dataFormUpdate}
-        />
-      </div>
+          <div className="container mx-auto px-0 pt-10 md:py-10">
+            <TableTask
+              columns={columns}
+              data={tasks}
+              categoryId={categoryId}
+              dataFormUpdate={dataFormUpdate}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };
